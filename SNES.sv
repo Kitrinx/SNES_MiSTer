@@ -848,8 +848,9 @@ wire raw_serial = status[8];
 
 assign USER_OUT[2] = 1'b1;
 assign USER_OUT[3] = 1'b1;
+assign USER_OUT[4] = 1'b1;
 assign USER_OUT[5] = 1'b1;
-assign USER_OUT[6] = 1'b1;
+//assign USER_OUT[6] = 1'b1;
 
 // JOYX_DO[0] is P4, JOYX_DO[1] is P5
 wire [1:0] JOY1_DI;
@@ -860,14 +861,15 @@ always_comb begin
 	if (raw_serial) begin
 		USER_OUT[0] = JOY_STRB;
 		USER_OUT[1] = joy_swap ? ~JOY2_CLK : ~JOY1_CLK;
-		USER_OUT[4] = joy_swap ? JOY2_P6 : JOY1_P6;
-		JOY1_DI = joy_swap ? JOY1_DO : {USER_IN[2], USER_IN[5]};
-		JOY2_DI = joy_swap ? {USER_IN[2], USER_IN[5]} : JOY2_DO;
+		USER_OUT[6] = joy_swap ? ~JOY1_CLK : ~JOY2_CLK;
+		//USER_OUT[4] = joy_swap ? JOY2_P6 : JOY1_P6;
+		JOY1_DI = joy_swap ? {USER_IN[4], USER_IN[3]} : {USER_IN[2], USER_IN[5]};
+		JOY2_DI = joy_swap ? {USER_IN[2], USER_IN[5]} : {USER_IN[4], USER_IN[3]};
 		JOY2_P6_DI = joy_swap ? USER_IN[4] : (LG_P6_out | !GUN_MODE);
 	end else begin
 		USER_OUT[0] = 1'b1;
 		USER_OUT[1] = 1'b1;
-		USER_OUT[4] = 1'b1;
+		USER_OUT[6] = 1'b1;
 		JOY1_DI = JOY1_DO;
 		JOY2_DI = JOY2_DO;
 		JOY2_P6_DI = (LG_P6_out | !GUN_MODE);
